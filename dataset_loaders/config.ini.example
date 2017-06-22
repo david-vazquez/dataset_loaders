@@ -33,3 +33,6 @@ shared_path = /data/lisatmp4/romerosa/datasets/davis/
 
 [gatech]
 shared_path = /data/lisatmp4/dejoieti/data/GATECH/
+
+[gta5]
+shared_path = /data/lisatmp4/vazquezd/Datasets/gta5/
