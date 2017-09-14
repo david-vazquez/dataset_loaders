@@ -10,6 +10,7 @@ from images.mscoco import MSCocoDataset
 from images.pascalvoc import PascalVOCdataset
 from images.polyps912 import Polyps912Dataset
 from images.scene_parsing_MIT import SceneParsingMITDataset
+from images.gta5 import GTA5Dataset
 
 from videos.change_detection import ChangeDetectionDataset
 from videos.davis import DavisDataset
