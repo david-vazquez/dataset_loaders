@@ -34,6 +34,7 @@ class GTA5Dataset(ThreadedDataset):
     data_shape = (1052, 1914, 3)
     mean = [0, 0, 0]
     std = [1, 1, 1]
+    max_files = 512
 
     mapping_type = 'cityscapes'
 
@@ -169,8 +170,11 @@ class GTA5Dataset(ThreadedDataset):
             import scipy.io
             split = scipy.io.loadmat(os.path.join(self.path, 'split.mat'))
             split = split[self.which_set + "Ids"]
-            for id in split:
-                filenames.append(str(id[0]).zfill(5)+'.png')
+
+            for i in range(1, self.max_files):
+                filenames.append(str(i).zfill(5)+'.png')
+            # for id in split:
+            #     filenames.append(str(id[0]).zfill(5)+'.png')
             self._filenames = filenames
             # print(filenames)
         return self._filenames
