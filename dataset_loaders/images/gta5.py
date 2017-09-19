@@ -3,10 +3,11 @@ import os
 import time
 
 from dataset_loaders.parallel_loader import ThreadedDataset
-
+from getpass import getuser
 
 floatX = 'float32'
 
+path = ('Tmp/' + getuser() + '/gta5')
 
 class GTA5Dataset(ThreadedDataset):
     '''The GTA5 semantic segmentation dataset
@@ -168,7 +169,7 @@ class GTA5Dataset(ThreadedDataset):
             # Get file names for this set
             filenames = []
             import scipy.io
-            split = scipy.io.loadmat(os.path.join(self.path, 'split.mat'))
+            split = scipy.io.loadmat(os.path.join(path, 'split.mat'))
             split = split[self.which_set + "Ids"]
 
             for i in range(1, self.max_files):
@@ -180,11 +181,12 @@ class GTA5Dataset(ThreadedDataset):
         return self._filenames
 
     def __init__(self, which_set='train', *args, **kwargs):
-
-        self.which_set = "val" if which_set == "valid" else which_set
-        self.image_path = os.path.join(self.path, "images")
-        self.mask_path = os.path.join(self.path, "labels")
-
+	print(path)
+	self.which_set = "val" if which_set == "valid" else which_set
+        self.image_path = os.path.join(path, "images")
+        self.mask_path = os.path.join(path, "labels")
+	print(self.image_path)
+	print(self.mask_path)
         # constructing the ThreadedDataset
         # it also creates/copies the dataset in self.path if not already there
         super(GTA5Dataset, self).__init__(*args, **kwargs)

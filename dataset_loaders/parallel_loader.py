@@ -19,7 +19,8 @@ from dataset_loaders.data_augmentation import random_transform
 import dataset_loaders
 from dataset_loaders.utils_parallel_loader import (classproperty, grouper,
                                                    overlap_grouper)
-
+from getpass import getuser
+path = ('Tmp/' + getuser() + '/gta5')
 
 class ThreadedDataset(object):
     _wait_time = 0.05
@@ -276,32 +277,33 @@ class ThreadedDataset(object):
             raise ValueError('`overlap` should be smaller than `seq_length`')
 
         # Copy the data to the local path if not existing
-        if not os.path.exists(self.path):
+	print(path)
+	if not os.path.exists(path):
             print('The local path {} does not exist. Copying '
-                  'the dataset...'.format(self.path))
-            shutil.copytree(self.shared_path, self.path)
-            with open(os.path.join(self.path, '__version__'), 'w') as f:
+                  'the dataset...'.format(path))
+	    print(self.shared_path)          
+            shutil.copytree(self.shared_path, path)
+            with open(os.path.join(path, '__version__'), 'w') as f:
                 f.write(self.__version__)
             print('Done.')
         else:
             try:
-                with open(os.path.join(self.path, '__version__')) as f:
+                with open(os.path.join(path, '__version__')) as f:
                     if f.read() != self.__version__:
                         raise IOError
             except IOError:
                 # __version__ file is missing
                 print('The local path {} exist, but is outdated. I will '
-                      'replace the old files with the new ones...'.format(
-                          self.path))
+                      'replace the old files with the new ones...'.format(path))
                 if not os.path.exists(self.shared_path):
                     print('The shared_path {} for {} does not exist. Please '
                           'edit the config.ini file with a valid path, as '
                           'specified in the README.'.format(self.shared_path,
                                                             self.name))
-                if realpath(self.path) != realpath(self.shared_path):
-                    shutil.rmtree(self.path)
-                    shutil.copytree(self.shared_path, self.path)
-                with open(os.path.join(self.path, '__version__'), 'w') as f:
+                if realpath(path) != realpath(self.shared_path):
+                    shutil.rmtree(path)
+                    shutil.copytree(self.shared_path, path)
+                with open(os.path.join(path, '__version__'), 'w') as f:
                     f.write(self.__version__)
                 print('Done.')
 
