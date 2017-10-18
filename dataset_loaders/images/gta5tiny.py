@@ -1,16 +1,13 @@
-
+"""GTA5 Tiny data loader module."""
 import numpy as np
 import os
 import time
-
 from dataset_loaders.parallel_loader import ThreadedDataset
-
-
 floatX = 'float32'
 
 
-class GTA5FullDataset(ThreadedDataset):
-    '''The GTA5 semantic segmentation dataset
+class GTA5TinyDataset(ThreadedDataset):
+    """The GTA5 semantic segmentation dataset.
 
     The GTA5 dataset [1] consists of 24966 densely labelled frames split into
     10 parts for convenience. The class labels are compatible with the CamVid
@@ -29,8 +26,10 @@ class GTA5FullDataset(ThreadedDataset):
      References
     ----------
     .. [1] https://download.visinf.tu-darmstadt.de/data/from_games/
-    '''
-    name = 'gta5full'
+
+    """
+
+    name = 'gta5Tiny'
     # optional arguments
     data_shape = (1052, 1914, 3)
     mean = [0, 0, 0]
@@ -156,8 +155,8 @@ class GTA5FullDataset(ThreadedDataset):
 
     @property
     def prefix_list(self):
+        """Create a list of prefix out of the number of requested videos."""
         if self._prefix_list is None:
-            # Create a list of prefix out of the number of requested videos
             self._prefix_list = np.unique(np.array([el[:6]
                                                     for el in self.filenames]))
 
@@ -165,30 +164,27 @@ class GTA5FullDataset(ThreadedDataset):
 
     @property
     def filenames(self):
+        """Get file names for this set."""
         if self._filenames is None:
-            # Get file names for this set
             filenames = []
             import scipy.io
             split = scipy.io.loadmat(os.path.join(self.path, 'split.mat'))
             split = split[self.which_set + "Ids"]
 
-            #for i in range(1, self.max_files):
-            #    filenames.append(str(i).zfill(5)+'.png')
-            for id in split:
-                filenames.append(str(id[0]).zfill(5)+'.png')
+            for i in range(1, self.max_files):
+                filenames.append(str(i).zfill(5)+'.png')
             self._filenames = filenames
-            # print(filenames)
         return self._filenames
 
     def __init__(self, which_set='train', *args, **kwargs):
+        """# constructing the ThreadedDataset.
 
+        it also creates/copies the dataset in self.path if not already there
+        """
         self.which_set = "val" if which_set == "valid" else which_set
         self.image_path = os.path.join(self.path, "images")
         self.mask_path = os.path.join(self.path, "labels")
-
-        # constructing the ThreadedDataset
-        # it also creates/copies the dataset in self.path if not already there
-        super(GTA5FullDataset, self).__init__(*args, **kwargs)
+        super(GTA5TinyDataset, self).__init__(*args, **kwargs)
 
     def get_names(self):
         """Return a dict of names, per prefix/subset."""
@@ -204,7 +200,7 @@ class GTA5FullDataset(ThreadedDataset):
         return per_subset_names
 
     def load_sequence(self, sequence):
-        """Load a sequence of images/frames
+        """Load a sequence of images/frames.
 
         Auxiliary function that loads a sequence of frames with
         the corresponding ground truth and their filenames.
@@ -241,8 +237,8 @@ class GTA5FullDataset(ThreadedDataset):
 
 
 def test():
-
-    trainiter = GTA5Dataset(
+    """Test the module."""
+    trainiter = GTA5TinyDataset(
         which_set='train',
         batch_size=10,
         seq_per_subset=0,
@@ -254,7 +250,7 @@ def test():
         return_list=True,
         use_threads=True)
 
-    validiter = GTA5Dataset(
+    validiter = GTA5TinyDataset(
         which_set='valid',
         batch_size=5,
         seq_per_subset=0,
@@ -288,15 +284,9 @@ def test():
 
 
 def run_tests():
+    """Run the tests."""
     test()
 
 
 if __name__ == '__main__':
     run_tests()
-
-
-
-
-
-
-

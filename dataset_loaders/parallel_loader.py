@@ -19,8 +19,7 @@ from dataset_loaders.data_augmentation import random_transform
 import dataset_loaders
 from dataset_loaders.utils_parallel_loader import (classproperty, grouper,
                                                    overlap_grouper)
-from getpass import getuser
-path = ('Tmp/' + getuser() + '/gta5')
+
 
 class ThreadedDataset(object):
     _wait_time = 0.05
@@ -277,33 +276,32 @@ class ThreadedDataset(object):
             raise ValueError('`overlap` should be smaller than `seq_length`')
 
         # Copy the data to the local path if not existing
-	print(path)
-	if not os.path.exists(path):
+        if not os.path.exists(self.path):
             print('The local path {} does not exist. Copying '
-                  'the dataset...'.format(path))
-	    print(self.shared_path)          
-            shutil.copytree(self.shared_path, path)
-            with open(os.path.join(path, '__version__'), 'w') as f:
+                  'the dataset...'.format(self.path))
+            shutil.copytree(self.shared_path, self.path)
+            with open(os.path.join(self.path, '__version__'), 'w') as f:
                 f.write(self.__version__)
             print('Done.')
         else:
             try:
-                with open(os.path.join(path, '__version__')) as f:
+                with open(os.path.join(self.path, '__version__')) as f:
                     if f.read() != self.__version__:
                         raise IOError
             except IOError:
                 # __version__ file is missing
                 print('The local path {} exist, but is outdated. I will '
-                      'replace the old files with the new ones...'.format(path))
+                      'replace the old files with the new ones...'.format(
+                          self.path))
                 if not os.path.exists(self.shared_path):
                     print('The shared_path {} for {} does not exist. Please '
                           'edit the config.ini file with a valid path, as '
                           'specified in the README.'.format(self.shared_path,
                                                             self.name))
-                if realpath(path) != realpath(self.shared_path):
-                    shutil.rmtree(path)
-                    shutil.copytree(self.shared_path, path)
-                with open(os.path.join(path, '__version__'), 'w') as f:
+                if realpath(self.path) != realpath(self.shared_path):
+                    shutil.rmtree(self.path)
+                    shutil.copytree(self.shared_path, self.path)
+                with open(os.path.join(self.path, '__version__'), 'w') as f:
                     f.write(self.__version__)
                 print('Done.')
 
@@ -381,7 +379,7 @@ class ThreadedDataset(object):
             # sleep(1)
 
     def get_names(self):
-        """ Loads ALL the names, per video.
+        """Load ALL the names, per video.
 
         Should return a *dictionary*, where each element of the
         dictionary is a list of filenames. The keys of the dictionary
@@ -392,7 +390,7 @@ class ThreadedDataset(object):
         raise NotImplementedError
 
     def load_sequence(self, sequence):
-        """ Loads a 4D sequence from the dataset.
+        """Load a 4D sequence from the dataset.
 
         Should return a *dict* with at least these keys:
             * 'data': the images or frames of the sequence
@@ -791,17 +789,17 @@ class ThreadedDataset(object):
 
     @classproperty
     def nclasses(self):
-        '''The number of classes in the output mask.'''
+        """The number of classes in the output mask."""
         return (self.non_void_nclasses + 1 if hasattr(self, '_void_labels') and
                 self._void_labels != [] else self.non_void_nclasses)
 
     @classproperty
     def void_labels(self):
-        '''Returns the void label(s)
+        """Returns the void label(s)
 
         If the dataset has void labels, returns self.non_void_nclasses,
         i.e. the label to which all the void labels are mapped. Else,
-        returns an empty list.'''
+        returns an empty list."""
         return ([self.non_void_nclasses] if hasattr(self, '_void_labels') and
                 self._void_labels != [] else [])
 
