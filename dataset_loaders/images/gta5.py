@@ -174,7 +174,8 @@ class GTA5Dataset(ThreadedDataset):
             for id in split:
                 filenames.append(str(id[0]).zfill(5)+'.png')
             self._filenames = filenames
-            # print(filenames)
+            print('GTA5: ' + self.which_set + ' ' + str(len(filenames)) +
+                  ' files')
         return self._filenames
 
     def __init__(self, which_set='train', *args, **kwargs):

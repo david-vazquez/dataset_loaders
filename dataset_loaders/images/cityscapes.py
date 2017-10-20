@@ -200,7 +200,7 @@ class CityscapesDataset(ThreadedDataset):
         return per_video_names
 
     def load_sequence(self, sequence):
-        """Load a sequence of images/frames
+        """Load a sequence of images/frames.
 
         Auxiliary function that loads a sequence of frames with
         the corresponding ground truth and their filenames.
