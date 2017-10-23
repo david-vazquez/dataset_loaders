@@ -289,21 +289,22 @@ class ThreadedDataset(object):
                     if f.read() != self.__version__:
                         raise IOError
             except IOError:
-                # __version__ file is missing
-                print('The local path {} exist, but is outdated. I will '
-                      'replace the old files with the new ones...'.format(
-                          self.path))
-                if not os.path.exists(self.shared_path):
-                    print('The shared_path {} for {} does not exist. Please '
-                          'edit the config.ini file with a valid path, as '
-                          'specified in the README.'.format(self.shared_path,
-                                                            self.name))
-                if realpath(self.path) != realpath(self.shared_path):
-                    shutil.rmtree(self.path)
-                    shutil.copytree(self.shared_path, self.path)
-                with open(os.path.join(self.path, '__version__'), 'w') as f:
-                    f.write(self.__version__)
-                print('Done.')
+                if False:
+                    # __version__ file is missing
+                    print('The local path {} exist, but is outdated. I will '
+                          'replace the old files with the new ones...'.format(
+                              self.path))
+                    if not os.path.exists(self.shared_path):
+                        print('The shared_path {} for {} does not exist. Please '
+                              'edit the config.ini file with a valid path, as '
+                              'specified in the README.'.format(self.shared_path,
+                                                                self.name))
+                    if realpath(self.path) != realpath(self.shared_path):
+                        shutil.rmtree(self.path)
+                        shutil.copytree(self.shared_path, self.path)
+                    with open(os.path.join(self.path, '__version__'), 'w') as f:
+                        f.write(self.__version__)
+                    print('Done.')
 
         # Save parameters in object
         self.seq_per_subset = seq_per_subset

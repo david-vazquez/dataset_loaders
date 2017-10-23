@@ -437,10 +437,16 @@ def random_transform(x, y=None,
        https://github.com/fchollet/keras/blob/master/keras/preprocessing/image.py
     '''
     # Set this to a dir, if you want to save augmented images samples
-    save_to_dir = None # "./"
+    save_to_dir = None  # "./"
 
     if rescale:
         raise NotImplementedError()
+
+    # Do not modify the original images
+    x = x.copy()
+    if y is not None and len(y) > 0:
+        y = y[..., None]  # Add extra dim to y to simplify computation
+        y = y.copy()
 
     # Scale images
     if prescale != 1.0:
@@ -451,12 +457,6 @@ def random_transform(x, y=None,
         y = [skimage.transform.rescale(y_image, prescale, order=0,
                                        preserve_range=True) for y_image in y]
         y = np.stack(y, 0)
-
-    # Do not modify the original images
-    x = x.copy()
-    if y is not None and len(y) > 0:
-        y = y[..., None]  # Add extra dim to y to simplify computation
-        y = y.copy()
 
     # listify zoom range
     if np.isscalar(zoom_range):

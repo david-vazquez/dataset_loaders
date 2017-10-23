@@ -2,6 +2,9 @@
 import numpy as np
 import os
 import time
+from skimage import io
+from PIL import Image
+import numpy as np
 from dataset_loaders.parallel_loader import ThreadedDataset
 floatX = 'float32'
 
@@ -171,8 +174,12 @@ class GTA5Dataset(ThreadedDataset):
             split = scipy.io.loadmat(os.path.join(self.path, 'split.mat'))
             split = split[self.which_set + "Ids"]
 
+            # To remove (Files with different size in img and mask)
+            to_remove = [15188, ] + range(20803, 20835) + range(20858, 20861)
+
             for id in split:
-                filenames.append(str(id[0]).zfill(5)+'.png')
+                if id not in to_remove:
+                    filenames.append(str(id[0]).zfill(5)+'.png')
             self._filenames = filenames
             print('GTA5: ' + self.which_set + ' ' + str(len(filenames)) +
                   ' files')
@@ -210,9 +217,6 @@ class GTA5Dataset(ThreadedDataset):
         labels, their subset (i.e. category, clip, prefix) and their
         filenames.
         """
-        from skimage import io
-        from PIL import Image
-        import numpy as np
         X = []
         Y = []
         F = []
